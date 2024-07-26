@@ -1,0 +1,8 @@
+flask
+llama-index
+streamlit
+Ollama
+nltk
+indic-nlp-library
+transformers
+torch

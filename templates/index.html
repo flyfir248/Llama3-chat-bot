@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Text</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Generate Text</h1>
+    <form action="/generate" method="post">
+        <textarea name="prompt" rows="4" cols="50">{{ prompt }}</textarea><br>
+        <input type="submit" value="Generate">
+    </form>
+    {% if response %}
+        <h2>Generated Response</h2>
+        <p>{{ response }}</p>
+        <p>Duration: {{ duration }} seconds</p>
+    {% endif %}
+</body>
+</html>

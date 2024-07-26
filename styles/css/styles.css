@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+}
+
+input[type="submit"] {
+    padding: 10px 20px;
+    font-size: 1em;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+p {
+    font-size: 1em;
+}

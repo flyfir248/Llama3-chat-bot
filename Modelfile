@@ -1,0 +1,7 @@
+FROM llama3.1
+
+# You can add custom prompts, parameters, or other configurations here
+# For example:
+# PARAMETER temperature 0.7
+# PARAMETER top_p 0.9
+# SYSTEM You are a helpful assistant specialized in programming and AI.
