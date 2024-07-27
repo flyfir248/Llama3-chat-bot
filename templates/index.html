@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Chat with LLMs Models</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Chat with LLMs Models</h1>
@@ -24,25 +25,19 @@
         {% endfor %}
     </div>
     <script>
-        document.getElementById('chat-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(event.target);
-            fetch('/chat', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert('Error: ' + data.error);
-                } else {
-                    const chatHistory = document.getElementById('chat-history');
-                    chatHistory.innerHTML += '<p><b>User:</b> ' + formData.get('prompt') + '</p>';
-                    chatHistory.innerHTML += '<p><b>Assistant:</b> ' + data.response + '</p>';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+        $(document).ready(function() {
+            $('#chat-form').on('submit', function(event) {
+                event.preventDefault();
+                const formData = $(this).serialize();
+                $.post('/chat', formData, function(data) {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        $('#chat-history').append('<p><b>User:</b> ' + $('#prompt').val() + '</p>');
+                        $('#chat-history').append('<p><b>Assistant:</b> ' + data.response + '</p>');
+                        $('#prompt').val(''); // Clear the input field
+                    }
+                }, 'json');
             });
         });
     </script>

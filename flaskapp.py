@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template, jsonify, session
 from llama_index.core.llms import ChatMessage
 from llama_index.llms.ollama import Ollama
 import logging
@@ -6,11 +6,9 @@ import time
 import socket
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Necessary for session management
 
 logging.basicConfig(level=logging.INFO)
-
-# Initialize chat history
-chat_history = []
 
 # Function to stream chat response based on selected model
 def stream_chat(model, messages):
@@ -36,27 +34,30 @@ def stream_chat(model, messages):
 
 @app.route('/')
 def index():
-    return render_template('index.html', chat_history=chat_history)
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+    return render_template('index.html', chat_history=session['chat_history'])
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    global chat_history
+    if 'chat_history' not in session:
+        session['chat_history'] = []
 
     user_input = request.form.get('prompt')
     model = request.form.get('model')
 
     if user_input:
-        chat_history.append({"role": "user", "content": user_input})
+        session['chat_history'].append({"role": "user", "content": user_input})
         logging.info(f"User input: {user_input}")
 
         try:
             # Prepare messages for the LLM and stream the response
-            messages = [ChatMessage(role=msg["role"], content=msg["content"]) for msg in chat_history]
+            messages = [ChatMessage(role=msg["role"], content=msg["content"]) for msg in session['chat_history']]
             start_time = time.time()
             response_message = stream_chat(model, messages)
             duration = time.time() - start_time
             response_message_with_duration = f"{response_message}\n\nDuration: {duration:.2f} seconds"
-            chat_history.append({"role": "assistant", "content": response_message_with_duration})
+            session['chat_history'].append({"role": "assistant", "content": response_message_with_duration})
             logging.info(f"Response: {response_message}, Duration: {duration:.2f} s")
             return jsonify({"response": response_message_with_duration, "duration": duration})
 
