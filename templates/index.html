@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Chat with LLMs Models</h1>
-    <form id="chat-form">
+    <form id="chat-form" method="post" action="/chat">
         <label for="model">Choose a model:</label>
         <select id="model" name="model">
             <option value="mymodel">mymodel</option>
@@ -16,21 +16,20 @@
         <br><br>
         <label for="prompt">Your question:</label>
         <input type="text" id="prompt" name="prompt">
-        <button type="button" onclick="sendMessage()">Send</button>
+        <button type="submit">Send</button>
     </form>
     <div id="chat-history">
+        {% for message in chat_history %}
+            <p><b>{{ message.role }}:</b> {{ message.content }}</p>
+        {% endfor %}
     </div>
     <script>
-        function sendMessage() {
-            const prompt = document.getElementById('prompt').value;
-            const model = document.getElementById('model').value;
-
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
             fetch('/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `prompt=${prompt}&model=${model}`
+                body: formData
             })
             .then(response => response.json())
             .then(data => {
@@ -38,14 +37,14 @@
                     alert('Error: ' + data.error);
                 } else {
                     const chatHistory = document.getElementById('chat-history');
-                    chatHistory.innerHTML += '<p><b>User:</b> ' + prompt + '</p>';
+                    chatHistory.innerHTML += '<p><b>User:</b> ' + formData.get('prompt') + '</p>';
                     chatHistory.innerHTML += '<p><b>Assistant:</b> ' + data.response + '</p>';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
-        }
+        });
     </script>
 </body>
 </html>

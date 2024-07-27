@@ -3,6 +3,7 @@ from llama_index.core.llms import ChatMessage
 from llama_index.llms.ollama import Ollama
 import logging
 import time
+import socket
 
 app = Flask(__name__)
 
@@ -24,14 +25,18 @@ def stream_chat(model, messages):
         # Log the interaction details
         logging.info(f"Model: {model}, Messages: {messages}, Response: {response}")
         return response
+    except socket.error as e:
+        # Log detailed socket error information
+        logging.error(f"Socket error during streaming: {str(e)}")
+        raise e
     except Exception as e:
-        # Log and re-raise any errors that occur
+        # Log and re-raise any other errors that occur
         logging.error(f"Error during streaming: {str(e)}")
         raise e
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', chat_history=chat_history)
 
 @app.route('/chat', methods=['POST'])
 def chat():
