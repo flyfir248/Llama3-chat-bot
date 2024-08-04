@@ -32,7 +32,7 @@ def stream_chat(model, messages):
         raise e
 
 def main():
-    st.title("Chat with LLMs Models")  # Set the title of the Streamlit app
+    st.title("Llama 3.1 8b chat bot")  # Set the title of the Streamlit app
     logging.info("App started")  # Log that the app has started
 
     # Sidebar for model selection
